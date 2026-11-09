@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Turret</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- Always-on overlays -->
+    <div id="banner" class="banner" hidden></div>
+    <div id="toast" class="toast" hidden></div>
+
+    <div id="hud" class="hud" hidden>
+      <div id="source" class="chip"></div>
+      <div class="meter-row" id="hud-meter-row" hidden>
+        <span>MIC</span>
+        <div class="meter" id="hud-meter"><i class="fill"></i><i class="floor"></i><i class="trig"></i></div>
+      </div>
+      <div class="keys">Space fire · R recentre · S shield · Q reload · P pause · V camera</div>
+    </div>
+
+    <div id="preview" class="preview" hidden>
+      <canvas id="preview-canvas" width="200" height="150"></canvas>
+      <span id="preview-label"></span>
+    </div>
+
+    <!-- Screens -->
+    <section id="screen-start" class="screen">
+      <div class="card">
+        <h1>Voice Turret</h1>
+        <p class="lead">Turn your head to aim. Say <b>“pew!”</b> to fire.</p>
+        <ul class="how">
+          <li><b>Aim</b> — your webcam follows your head. Turn left/right, nod up/down.</li>
+          <li><b>Fire</b> — any sharp sound: “pew!”, a clap, a click. Space works too.</li>
+          <li><b>Survive</b> — don't let targets reach the ground. Three lives.</li>
+        </ul>
+        <button id="btn-enable" class="primary">Turn on camera &amp; microphone</button>
+        <button id="btn-mouse" class="ghost">Play with mouse &amp; keyboard instead</button>
+        <p id="start-status" class="status"></p>
+        <p class="fine">
+          Your camera and microphone are processed inside this browser tab only.
+          Nothing is recorded, saved or uploaded.
+        </p>
+        <button class="link" data-open-settings>Settings</button>
+      </div>
+    </section>
+
+    <section id="screen-calibrate" class="screen clear" hidden>
+      <div class="dot"></div>
+      <div class="card small low">
+        <h2 id="cal-title">Look at the dot and say “pew!”</h2>
+        <p id="cal-text">Sit comfortably, face the middle of the screen, then say “pew!” or press Space.</p>
+      </div>
+    </section>
+
+    <section id="screen-pause" class="screen" hidden>
+      <div class="card small">
+        <h2>Paused</h2>
+        <button id="btn-resume" class="primary">Resume</button>
+        <button id="btn-recal" class="ghost">Recalibrate aim</button>
+        <button class="ghost" data-open-settings>Settings</button>
+        <button id="btn-quit" class="ghost">Quit to start</button>
+      </div>
+    </section>
+
+    <section id="screen-over" class="screen" hidden>
+      <div class="card small">
+        <h2>Game over</h2>
+        <p class="score"><span id="final-score">0</span></p>
+        <p id="final-detail" class="status"></p>
+        <button id="btn-again" class="primary">Play again</button>
+        <button class="ghost" data-open-settings>Settings</button>
+      </div>
+    </section>
+
+    <section id="screen-settings" class="screen top" hidden>
+      <div class="card">
+        <h2>Settings</h2>
+
+        <h3>Aiming</h3>
+        <label>Sensitivity <output id="o-sensitivity"></output>
+          <input id="s-sensitivity" type="range" min="0.5" max="2.5" step="0.05" />
+          <small>Higher = smaller head movements reach the screen edges.</small></label>
+        <label>Smoothing <output id="o-smoothing"></output>
+          <input id="s-smoothing" type="range" min="0" max="0.9" step="0.05" />
+          <small>Higher = steadier crosshair, but it lags a little.</small></label>
+        <label>Dead zone <output id="o-deadZone"></output>
+          <input id="s-deadZone" type="range" min="0" max="5" step="0.25" />
+          <small>Tiny head movements around the centre are ignored.</small></label>
+        <label class="check"><input id="s-invertPitch" type="checkbox" /> Invert up/down</label>
+        <label class="check"><input id="s-invertYaw" type="checkbox" /> Invert left/right</label>
+        <label class="check"><input id="s-showPreview" type="checkbox" /> Show webcam preview</label>
+
+        <h3>Sound trigger</h3>
+        <div class="meter big" id="set-meter"><i class="fill"></i><i class="floor"></i><i class="trig"></i></div>
+        <small id="mic-hint">Green bar = mic level. Grey line = background noise. Yellow line = a sound must pass this to fire.</small>
+        <label>Trigger threshold <output id="o-micThreshold"></output>
+          <input id="s-micThreshold" type="range" min="0.05" max="0.6" step="0.01" />
+          <small>Firing by accident? Raise it. “Pew” not registering? Lower it.</small></label>
+        <label class="check"><input id="s-speakerGuard" type="checkbox" /> Ignore the mic while game sounds play
+          <small>Stops your speakers from firing the turret. Turn off if you wear headphones.</small></label>
+        <label>Game volume <output id="o-volume"></output>
+          <input id="s-volume" type="range" min="0" max="1" step="0.05" /></label>
+
+        <h3>Voice commands</h3>
+        <label class="check"><input id="s-voiceEnabled" type="checkbox" /> Listen for “shield”, “reload” and “pause”
+          <small id="voice-note"></small></label>
+
+        <button id="btn-settings-done" class="primary">Done</button>
+        <button id="btn-settings-reset" class="link">Reset to defaults</button>
+      </div>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
